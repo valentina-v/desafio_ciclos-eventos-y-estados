@@ -1,8 +1,8 @@
 <template>
-  <div>
+  <div row>
       <h1>PokeGuía</h1>
       <p>Nombre</p>
-      <input v-model="pokemonName" type="Escribe el nombre aquí">
+      <input v-model="pokemonName" type="text">
       <button @click="searchPokemon" >Buscar</button>
      <img v-if="currentPokemon.sprites" :src="currentPokemon.sprites.front_default">
       <h3>Moves</h3>
