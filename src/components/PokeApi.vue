@@ -1,10 +1,21 @@
 <template>
   <div row>
       <h1>PokeGuía</h1>
+      <label for="pokemon"></label>
       <p>Nombre</p>
       <input v-model="pokemonName" type="text">
+      <p v-if="error">Su búsqueda no arrojó resultados</p>
       <button @click="searchPokemon" >Buscar</button>
-     <img v-if="currentPokemon.sprites" :src="currentPokemon.sprites.front_default">
+     
+      <br>
+      <img v-if="currentPokemon.sprites" :src="sprites[this.photoIndex]"/>
+      <button @click="photoIndex +=1">
+          Previa
+      </button>
+      <button @click="photoIndex -=1">
+          Siguiente
+      </button>
+
       <h3>Moves</h3>
       <ul>
           <li v-for="move in moves" :key="move.name">
@@ -25,20 +36,24 @@ export default {
     data() {
         return{
             currentPokemon: {},
-            pokemonName: ""
+            pokemonName: "",
+            error: undefined,
+            photoIndex: 0,
         }
     },
     created () {
-        fetch (`https://pokeapi.co/api/v2/pokemon/`)
-        .then(response => response.json())
-        .then(data => this.currentPokemon = data)
     },
     methods: {
         searchPokemon () {
             fetch (`https://pokeapi.co/api/v2/pokemon/${this.pokemonName}`)
             .then(data => data.json())
-            .then(response => this.currentPokemon = response)
-        }
+            .then(response => {
+                console.log(response);
+                this.error = undefined;
+                return (this.currentPokemon = response); 
+                })
+                .catch((error) =>(this.error = error))
+            }
     },
     computed:{
         moves(){
@@ -49,6 +64,9 @@ export default {
         },
         lower() {
             return this.pokemonName.toLowerCase()
+        },
+        sprites(){
+            return Object.values(this.currentPokemon.sprites);
         }
     }
 }
